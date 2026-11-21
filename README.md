@@ -80,9 +80,9 @@ Se `docker compose version` não funcionar, instale o plugin `docker-compose-plu
 
 Ubuntu/Debian (inclusive no WSL):
 ```bash
-sudo apt update && sudo apt install -y python3-venv python3-pip unzip curl
+sudo apt update && sudo apt install -y git python3-venv python3-pip unzip curl
 ```
-(Fedora: `sudo dnf install -y python3 python3-pip unzip curl` · Arch: `sudo pacman -S python python-pip unzip curl`)
+(Fedora: `sudo dnf install -y git python3 python3-pip unzip curl` · Arch: `sudo pacman -S git python python-pip unzip curl`)
 
 ### 0.3 AWS CLI v2
 
@@ -121,14 +121,19 @@ Daqui pra frente, `awslocal s3 ls` é o mesmo que `aws --endpoint-url=http://loc
 
 ### 0.5 Pegar o projeto
 
-O jeito mais fácil para o grupo é subir esta pasta para um repositório no GitHub e cada um
-fazer `git clone`. Ou copiar a pasta direto.
-
-**No WSL, trabalhe dentro da sua home do Linux (`~`), não em `/mnt/c/...`** — é bem mais
-rápido e evita problemas de permissão. Para copiar do Windows para o WSL (ajuste o caminho):
+Clone o repositório dentro da sua home do Linux:
 ```bash
-cp -r "/mnt/c/Users/SEU_USUARIO/Downloads/atividades-localstack" ~/
+git clone https://github.com/hugbrl09/atividades-localstack.git ~/atividades-localstack
+cd ~/atividades-localstack
 ```
+
+**No WSL, rode o clone no terminal do Ubuntu e trabalhe na home do Linux (`~`), não em
+`/mnt/c/...`**: é bem mais rápido e evita problemas de permissão e de quebra de linha.
+
+Para pegar atualizações que alguém do grupo enviou depois: `git pull`.
+
+Se o repositório estiver privado, o GitHub pede login no clone. Senha normal não funciona:
+use `gh auth login` (GitHub CLI) ou um *personal access token* no lugar da senha.
 
 ### 0.6 Ambiente virtual Python (venv)
 
