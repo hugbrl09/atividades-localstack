@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block conteudo %}
+<h1>Área logada</h1>
+<p>Estes dados foram lidos agora da tabela <strong>{{ tabela }}</strong> do DynamoDB:</p>
+<dl>
+  <dt>Nome</dt><dd>{{ usuario.nome }}</dd>
+  <dt>E-mail (chave primária)</dt><dd>{{ usuario.email }}</dd>
+  <dt>Conta criada em</dt><dd>{{ usuario.criado_em }}</dd>
+  <dt>Senha salva (hash, não a senha real)</dt><dd>{{ usuario.senha_hash[:40] }}…</dd>
+</dl>
+<p class="rodape"><a href="{{ url_for('logout') }}">Sair</a></p>
+{% endblock %}

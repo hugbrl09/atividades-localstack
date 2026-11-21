@@ -1,0 +1,5 @@
+.venv/
+__pycache__/
+atividade3-lambda/build/
+atividade3-lambda/function.zip
+atividade3-lambda/resultado/

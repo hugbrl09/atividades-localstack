@@ -1,0 +1,26 @@
+# Sobe o LocalStack (simulador da AWS) em um container Docker.
+# Uso:  docker compose up -d      (sobe em segundo plano)
+#       docker compose logs -f    (acompanha os logs)
+#       docker compose down       (desliga e apaga tudo que foi criado)
+services:
+  localstack:
+    container_name: localstack
+    # Versão 4.12 = última "Community" que roda SEM conta/token.
+    # A partir de março/2026 a imagem "latest" passou a exigir LOCALSTACK_AUTH_TOKEN.
+    # Plano B: criar conta grátis em app.localstack.cloud e subir com
+    #          LOCALSTACK_TAG=latest e LOCALSTACK_AUTH_TOKEN=<seu token>.
+    image: localstack/localstack:${LOCALSTACK_TAG:-4.12}
+    ports:
+      - "127.0.0.1:4566:4566"            # endpoint único de TODOS os serviços
+      - "127.0.0.1:4510-4559:4510-4559"  # portas extras de alguns serviços
+    environment:
+      # Serviços que vamos usar (S3, DynamoDB, Lambda + o que o Lambda precisa por baixo)
+      - SERVICES=s3,dynamodb,lambda,iam,sts,logs
+      - AWS_DEFAULT_REGION=us-east-1
+      - DEBUG=0
+      # Só é usado no Plano B (imagem nova). Vazio = ignorado.
+      - LOCALSTACK_AUTH_TOKEN=${LOCALSTACK_AUTH_TOKEN:-}
+    volumes:
+      # O LocalStack cria um container Docker para executar cada função Lambda,
+      # por isso ele precisa acessar o Docker da máquina.
+      - "/var/run/docker.sock:/var/run/docker.sock"

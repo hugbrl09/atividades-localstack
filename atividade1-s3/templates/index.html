@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atividade 1 - S3</title>
+  <style>
+    body { font-family: system-ui, sans-serif; max-width: 860px; margin: 32px auto; padding: 0 16px; color: #222; }
+    h1 { margin-bottom: 4px; }
+    .sub { color: #666; margin-top: 0; }
+    form { display: flex; gap: 8px; align-items: center; padding: 16px; background: #f3f5f8; border-radius: 8px; }
+    button { padding: 8px 16px; border: 0; border-radius: 6px; background: #1f6feb; color: #fff; cursor: pointer; }
+    .msg { padding: 10px 14px; border-radius: 6px; margin: 12px 0; }
+    .ok { background: #e6f4ea; color: #1e6b34; }
+    .erro { background: #fdecea; color: #a12622; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th, td { text-align: left; padding: 8px; border-bottom: 1px solid #e3e3e3; vertical-align: middle; }
+    img.mini { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; }
+    .vazio { color: #888; margin-top: 20px; }
+  </style>
+</head>
+<body>
+  <h1>Atividade 1 — Upload de imagens no S3</h1>
+  <p class="sub">Bucket: <strong>{{ bucket }}</strong> (LocalStack)</p>
+
+  {% for categoria, mensagem in get_flashed_messages(with_categories=true) %}
+    <div class="msg {{ categoria }}">{{ mensagem }}</div>
+  {% endfor %}
+
+  <form action="{{ url_for('upload') }}" method="post" enctype="multipart/form-data">
+    <input type="file" name="arquivo" accept="image/*" required>
+    <button type="submit">Enviar para o S3</button>
+  </form>
+
+  {% if arquivos %}
+  <table>
+    <tr><th>Prévia</th><th>Arquivo</th><th>Tamanho</th><th>Enviado em</th><th></th></tr>
+    {% for a in arquivos %}
+    <tr>
+      <td><img class="mini" src="{{ url_for('ver', nome=a.nome) }}" alt="{{ a.nome }}"></td>
+      <td>{{ a.nome }}</td>
+      <td>{{ a.tamanho_kb }} KB</td>
+      <td>{{ a.data }}</td>
+      <td><a href="{{ url_for('download', nome=a.nome) }}">Baixar</a></td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% else %}
+  <p class="vazio">Nenhuma imagem no bucket ainda. Envie a primeira!</p>
+  {% endif %}
+</body>
+</html>
