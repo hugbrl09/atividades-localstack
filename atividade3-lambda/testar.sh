@@ -37,6 +37,6 @@ for _ in $(seq 1 45); do
 done
 
 echo "A imagem processada não apareceu em 90s."
-echo "Veja os logs:  aws --endpoint-url=$ENDPOINT logs tail /aws/lambda/processa-imagem"
+echo "Veja os logs:  awslocal logs tail /aws/lambda/processa-imagem"
 echo "          ou:  docker logs localstack --tail 50"
 exit 1

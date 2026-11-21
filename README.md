@@ -92,32 +92,29 @@ Use o instalador oficial (funciona em qualquer Linux):
 cd /tmp
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o awscliv2.zip
 unzip -q awscliv2.zip && sudo ./aws/install
+cd ~ && hash -r
 aws --version
 ```
+Tem que aparecer `aws-cli/2.x`. Se você já tinha o AWS CLI v1 do apt (comum no Ubuntu 22.04),
+não precisa desinstalar: o v2 fica em `/usr/local/bin` e passa na frente. O v1 é antigo demais
+para os scripts da atividade 3 (não tem, por exemplo, o `aws logs tail`).
 (Em PC com processador ARM troque `x86_64` por `aarch64` no link.)
 
-### 0.4 Configurar o AWS CLI
+### 0.4 Atalho `awslocal`
 
+Crie um atalho `awslocal`: é o `aws` apontando para o LocalStack e já com as credenciais
+falsas, que o LocalStack aceita. Também desligue o "paginador" do CLI:
 ```bash
-aws configure
-```
-Responda exatamente:
-```
-AWS Access Key ID [None]: test
-AWS Secret Access Key [None]: test
-Default region name [None]: us-east-1
-Default output format [None]: json
-```
-As credenciais são falsas de propósito: o LocalStack aceita qualquer valor, e assim não existe
-risco de mexer numa conta AWS real.
-
-Crie um atalho `awslocal` (= `aws` apontando para o LocalStack) e desligue o "paginador":
-```bash
-echo 'alias awslocal="aws --endpoint-url=http://localhost:4566"' >> ~/.bashrc
+echo 'alias awslocal="AWS_ACCESS_KEY_ID=test AWS_SECRET_ACCESS_KEY=test AWS_DEFAULT_REGION=us-east-1 aws --endpoint-url=http://localhost:4566"' >> ~/.bashrc
 echo 'export AWS_PAGER=""' >> ~/.bashrc
 source ~/.bashrc
 ```
-Daqui pra frente, `awslocal s3 ls` é o mesmo que `aws --endpoint-url=http://localhost:4566 s3 ls`.
+Daqui pra frente, `awslocal s3 ls` é o mesmo que `aws --endpoint-url=http://localhost:4566 s3 ls`
+usando as credenciais `test`.
+
+**Não precisa rodar o `aws configure` do slide.** O atalho, os apps e os scripts já passam as
+credenciais `test` sozinhos. Assim, se você já tiver um `~/.aws` configurado (de outra
+disciplina ou de uma conta real), nada dele é sobrescrito.
 
 ### 0.5 Pegar o projeto
 
@@ -265,8 +262,8 @@ chmod +x atividade3-lambda/*.sh
 ```
 O `testar.sh` envia a `exemplo.png` (colorida, 600x400) para o bucket de origem, espera a
 Lambda rodar e baixa o resultado (cinza, 300x200) em `atividade3-lambda/resultado/`.
-Para ver a imagem: no WSL `explorer.exe atividade3-lambda/resultado` · no Linux
-`xdg-open atividade3-lambda/resultado/exemplo.png`.
+Para ver a imagem: no WSL `explorer.exe "$(wslpath -w atividade3-lambda/resultado)"` (abre a
+pasta no Explorer do Windows) · no Linux `xdg-open atividade3-lambda/resultado/exemplo.png`.
 
 Testar com uma foto sua: `./atividade3-lambda/testar.sh ~/minha-foto.jpg`
 
@@ -318,7 +315,8 @@ Cada imagem enviada pelo site dispara a Lambda. Confira com
 | `permission denied ... docker.sock` | Linux: `sudo usermod -aG docker $USER` e saia/entre da sessão |
 | LocalStack fecha pedindo token / "license" | Está usando a imagem nova. Confira se o compose está com `4.12` e se não exportou `LOCALSTACK_TAG=latest` |
 | `Could not connect to the endpoint URL: "http://localhost:4566/..."` | LocalStack não está rodando: `docker compose ps` e `docker compose logs` |
-| `Unable to locate credentials` | Rode o `aws configure` (passo 0.4) |
+| `Unable to locate credentials` | Use o `awslocal` em vez de `aws` puro (passo 0.4); ele já leva as credenciais `test` |
+| `aws: error: argument operation: Invalid choice` (ex.: no `logs tail`) | Está usando o AWS CLI v1. Instale o v2 (passo 0.3) e rode `hash -r` |
 | `ModuleNotFoundError: No module named 'flask'` ou `externally-managed-environment` | Esqueceu de ativar o venv: `source .venv/bin/activate` |
 | `/usr/bin/env: 'bash\r': No such file or directory` | O script ganhou quebra de linha do Windows: `sed -i 's/\r$//' atividade3-lambda/*.sh` |
 | `Permission denied` ao rodar `./deploy.sh` | `chmod +x atividade3-lambda/*.sh` |
