@@ -64,7 +64,8 @@ def index():
         {
             "nome": obj["Key"],
             "tamanho_kb": round(obj["Size"] / 1024, 1),
-            "data": obj["LastModified"].strftime("%d/%m/%Y %H:%M:%S"),
+            # O S3 guarda a data em UTC; astimezone() converte para o fuso do computador
+            "data": obj["LastModified"].astimezone().strftime("%d/%m/%Y %H:%M:%S"),
         }
         for obj in resposta.get("Contents", [])
     ]
